@@ -13,9 +13,9 @@ local FileName = "SavedKey.lua"
 
 local ValidKeys = {
     "9b4f2c1e77a8d3f0b2c1e4a9d6f8b3c7",
-    "",
-    "",
-    ""
+    "9b4f2c1e77a8d3f0b2c1e4a9d6f8b3c7",
+    "9b4f2c1e77a8d3f0b2c1e4a9d6f8b3c7",
+    "9b4f2c1e77a8d3f0b2c1e4a9d6f8b3c7"
 }
 
 
