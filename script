@@ -27,7 +27,7 @@ local HttpService = game:GetService("HttpService")
 
 local defaultSettings = {
     walkspeedEnabled = false,
-    currentWalkSpeed = 30,
+    currentWalkSpeed = 32,
     infiniteJumpEnabled = false,
     boostJumpEnabled = false,
     currentBoostStrength = 50,
@@ -1672,13 +1672,13 @@ local function createTabContent(name)
 
         speedTextBox.FocusLost:Connect(function()
             local input = tonumber(speedTextBox.Text)
-            if input and input >= 25 and input <= 50 then
+            if input and input >= 32 and input <= 40 then
                 updateWalkspeed(input)
                 speedTextBox.Text = tostring(currentWalkSpeed)
                 StarterGui:SetCore("SendNotification", {Title = "Walkspeed Updated", Text = "Walkspeed set to " .. currentWalkSpeed, Duration = 3})
             else
                 speedTextBox.Text = tostring(currentWalkSpeed)
-                StarterGui:SetCore("SendNotification", {Title = "Invalid Speed", Text = "Speed must be between 25 and 50", Duration = 3})
+                StarterGui:SetCore("SendNotification", {Title = "Invalid Speed", Text = "Speed must be between 32 and 40", Duration = 3})
             end
         end)
 
