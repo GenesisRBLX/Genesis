@@ -1,0 +1,158 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/nfpw/Simple-KeySystem-Roblox/refs/heads/main/Library.lua"))()  
+
+local KeyWindow = Library:CreateWindow("Key System", UDim2.fromOffset(300, 180))
+local UpdateWindow = Library:CreateWindow("Updates", UDim2.fromOffset(300, 300))
+UpdateWindow.Outer.Position = UDim2.new(0.7, 0, 0.5, 0)
+
+local KeyBox = KeyWindow:AddTextBox("Enter Key...", UDim2.new(0.1, 0, 0.15, 0))
+local RememberToggle = KeyWindow:AddToggle("Remember Key", UDim2.new(0.1, 0, 0.36, 0), false)
+
+local KeyPath = "DisabledHubConfigs/Key"
+local FileName = "SavedKey.lua"
+
+
+local ValidKeys = {
+    "9b4f2c1e77a8d3f0b2c1e4a9d6f8b3c7",
+    "",
+    "",
+    ""
+}
+
+
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1419451536647524532/ON_YLeabk5H8UcbnZzR7kVWiqAfuRFT6K6op9K0iy2ZWIL74bxRVcl2G7X708biOQo7r" -- replace with your webhook
+
+
+local function SendToDiscord(username, key)
+    local HttpService = game:GetService("HttpService")
+    local data = {
+        ["username"] = "Key System Logger",
+        ["embeds"] = {{
+            ["title"] = "🔑 Script Executed",
+            ["description"] = "**User:** " .. username .. "\n**Key Used:** " .. key,
+            ["color"] = 16753920
+        }}
+    }
+
+    local finalData = HttpService:JSONEncode(data)
+    request = request or http_request or (syn and syn.request) or (fluxus and fluxus.request)
+
+    if request then
+        request({
+            Url = WEBHOOK_URL,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = finalData
+        })
+    else
+        warn("No HTTP request function available.")
+    end
+end
+
+
+local SavedKey = Library:LoadKey(KeyPath, FileName)
+if SavedKey then
+    KeyBox.Text = SavedKey
+    RememberToggle.SetState(true)
+end
+
+
+local function IsValidKey(inputKey)
+    for _, key in ipairs(ValidKeys) do
+        if inputKey == key then
+            return true
+        end
+    end
+    return false
+end
+
+
+local SubmitButton = KeyWindow:AddButton("Submit", UDim2.new(0.1, 0, 0.65, 0), function()
+    if IsValidKey(KeyBox.Text) then
+        if RememberToggle.GetState() then
+            Library:SaveKey(KeyPath, FileName, KeyBox.Text)
+        end
+        KeyWindow:Close()
+        UpdateWindow:Close()
+
+        
+        local player = cloneref(game:GetService("Players")).LocalPlayer
+        SendToDiscord(player.Name, KeyBox.Text)
+
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisRBLX/Genesis/refs/heads/main/script"))() -- Your main script
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/GenesisRBLX/Genesis/refs/heads/main/script"))() -- put the main script here
+    else
+        local player = cloneref(game:GetService("Players")).LocalPlayer
+        player:Kick("Invalid Key")
+        if player then
+            player:Destroy()
+        end
+    end
+end)
+
+local GetKeyButton = KeyWindow:AddButton("Get Key", UDim2.new(0.55, 0, 0.65, 0), function()
+    if setclipboard then
+        setclipboard("https://discord.gg/genes")
+    else
+        warn("setclipboard is not available.")
+    end
+end)
+
+
+local ScrollFrame = Library:Create('ScrollingFrame', {
+    Position = UDim2.new(0.05, 0, 0.05, 0),
+    Size = UDim2.new(0.9, 0, 0.9, 0),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ScrollBarThickness = 3,
+    ScrollBarImageColor3 = Library.AccentColor,
+    Parent = UpdateWindow.Outer.Frame.Frame
+})
+
+function CreateUpdateItem(Icon, Title, Content, YPosition)
+    local Container = Library:Create('Frame', {
+        Position = UDim2.new(0, 0, 0, YPosition),
+        Size = UDim2.new(1, 0, 0, 30),
+        BackgroundTransparency = 1,
+        Parent = ScrollFrame
+    })
+
+    Library:CreateLabel({
+        Position = UDim2.new(0, 5, 0, 0),
+        Size = UDim2.new(0, 20, 0, 20),
+        Text = Icon,
+        TextSize = 16,
+        Parent = Container
+    })
+
+    Library:CreateLabel({
+        Position = UDim2.new(0, 30, 0, 0),
+        Size = UDim2.new(0.9, -30, 0, 20),
+        Text = Title,
+        TextColor3 = Library.AccentColor,
+        TextSize = 14,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = Container
+    })
+
+    Library:CreateLabel({
+        Position = UDim2.new(0, 30, 0, 20),
+        Size = UDim2.new(0.9, -30, 0, 20),
+        Text = Content,
+        TextSize = 13,
+        TextColor3 = Color3.new(0.8, 0.8, 0.8),
+        TextXAlignment = Enum.TextXAlignment.Left,
+        Parent = Container
+    })
+
+    return 45
+end
+
+local YOffset = 0
+YOffset = YOffset + CreateUpdateItem("🆕", "New Features", "Modern UI design with enhanced", YOffset)
+YOffset = YOffset + CreateUpdateItem("", "", "colors and smoother animations", YOffset - 25)
+YOffset = YOffset + CreateUpdateItem("⚡", "Improvements", "Enhanced button animations and", YOffset)
+YOffset = YOffset + CreateUpdateItem("", "", "interactions with better feedback", YOffset - 25)
+YOffset = YOffset + CreateUpdateItem("🔧", "Bug Fixes", "Fixed dragging functionality", YOffset)
+YOffset = YOffset + CreateUpdateItem("", "", "and various UI improvements", YOffset - 25)
+
+ScrollFrame.CanvasSize = UDim2.new(0, 0, 0, YOffset + 20)
